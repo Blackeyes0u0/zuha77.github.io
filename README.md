@@ -1,13 +1,13 @@
 # 비트코인 데이터를 통해 주가 예측
 2021 fall / AI-x:Deep-learning final project
 
-# Member
+# 맴버
 물리학과 신중현 2016039534
 E-mail : jhshin1030@naver.com
 역할 : all
 
 
-# I. Proposal
+# I. 개요
 AI + X : 딥러닝 final project
 - 최근 암호화폐거래소로 투자자들이 몰리면서 비트코인 가격이 급등락하고 있습니다. 이러한 마구잡이처럼 보이는 비트코인 시장에서 과연 얼마나 예측이 가능한지. 그리고 예측한 모델이 얼마나 실제 데이터와 일치하는지를 확인해보고 딥러닝을 활용한 투자 가능성을 확인해 보았습다. 그리하여이 블로그에서는 딥러닝 모형을 이용하여 비트코인의 가격을 예측하고, 투자전략을 통해 비트코인의 수익성이 있는지를 분석하는 것이 목표입니다. 마지막으로 비선형성과 장기기억 특성을 보이는 비트코인 가격 예측모형으로는 LSTM을 활용하여 분석하였습니다.
 
@@ -15,7 +15,7 @@ AI + X : 딥러닝 final project
 
 ![png](bb.jpg)
 
-# II. Datasets
+# II. 데이터셋
 
 데이터 출처 
 https://finance.yahoo.com/quote/BTC-USD/history?period1=1410912000&period2=1639699200&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true
@@ -31,7 +31,7 @@ https://finance.yahoo.com/quote/BTC-USD/history?period1=1410912000&period2=16396
 |  |  |  | || | 
 | 2021.12.01 | 56907.97 |57229.83|59041.69|56553.08 |1.08E+12 | [Table caption, works as a reference][section-mmd-tables-table1]
 
-# III. Methodology 
+# III. 비트코인 예측을 위한  
 
 먼저 비트코인의 데이터는 순차적 데이터입니다. 
 순차적 데이터란 즉, 데이터의 순서가 중요한 일종의 데이터입니다. 예를들어 회사 A의 연간 주식시장 가격이라든지. 이런 종류의 데이터에서는 연도별로 확인해야 하기 때문에 순서와 추세를 찾아야 합니다. 연도의 순서를 변경이 불가능한 경우에 순차적 시계열 데이터 라고 할수 있습니다.
@@ -79,7 +79,7 @@ LSTM 네트워크는 시계열 에서 중요한 이벤트 사이에 알 수 없�
 LSTM의 역전파는 RNN 섹션에서 설명한 방식과 유사하게 작동합니다.
 
 - 
-# IV. Code implement Analysis & Conclusion
+# IV. LSTM을 통한 비트코인 예측 구현 과정 & 결과
 
 - pytorch를 이용해 bitcoin 데이터를 학습하여 구현하였다.
 
@@ -385,7 +385,7 @@ plt.show()
  
  
  
-# V. Related Work (e.g., existing studies)
+# V. 참고자료
 - anconda jupyter note book 과 google colab에서 작업하였고, pytorch docutments, kaggle, blog 등을 보며 학습하였다.
 - https://wikidocs.net/book/2788
 - https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html
