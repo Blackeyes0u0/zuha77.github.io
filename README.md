@@ -11,10 +11,9 @@ E-mail : jhshin1030@naver.com
 
 - 최근 암호화폐거래소로 투자자들이 몰리면서 비트코인 가격이 급등락하고 있다. 그리하여 딥러닝 모형
 을 이용하여 비트코인의 가격을 예측하고, 투자전략을 통해 비트코인의 수익성이 있는지를 분석하는 것이다. 비선형성
-과 장기기억 특성을 보이는 비트코인 가격 예측모형으로는 LSTM을 활용하며, 예측 가격을 입력변수로 하는 이동평균
-선 교차전략의 수익성을 분석하였다. 최근 데이터까지 확장하여 분석한 결과, 비트코인 투자자들에게는 딥러닝 모형을 이용한
-투자전략의 실전 활용 가능성을 보여주었다. 향후 연구에서는 다양한 딥러닝 모형들의 성과 비교를 통해 최적의 예측모
-형을 개발하고 비트코인 투자전략의 수익성을 개선할 필요가 있다
+과 장기기억 특성을 보이는 비트코인 가격 예측모형으로는 LSTM을 활용하여 분석하였다. 
+
+
 # II. Datasets
 | date | open | close |high|low  |market cap|
 | :------------ | :-----------: | -------------------: | -------------------: | -------------: | -------------: | 
@@ -26,8 +25,44 @@ E-mail : jhshin1030@naver.com
 | 2021.12.01 | 56907.97 |57229.83|59041.69|56553.08 |1.08E+12 | [Table caption, works as a reference][section-mmd-tables-table1]
 
 # III. Methodology 
-- Explaining your choice of algorithms (methods)
-- Explaining features (if any)
+
+먼저 비트코인의 데이터는 순차적 데이터이다. 
+순차적 데이터란 즉, 데이터의 순서가 중요한 일종의 데이터이다. 예를들어 회사 A의 연간 주식시장 가격이라든지. 이런 종류의 데이터에서는 연도별로 확인해야 하기 때문에 순서와 추세를 찾아야 한다. 연도의 순서를 변경이 불가능한 경우이다.
+
+이러한 순차적 데이터를 활용하는 방법들이 생각해보자. 전통적인 Neural Network에서는 이전에 일어난 사건을 바탕으로 나중에 일어나는 사건을 생각하지 못한다. 따라서 RNN은 스스로를 반복하면서 이전단계의 정보를 지속되도록한다.
+
+그 중에서 LSTM (Long Shor-Term Memory)를 이용할것이다. LSTM 은 RNN의 수정된 아키텍처이며, 긴 의존 기간을 필요로 하는 학습을 수행할 능력을 갖고 있다.
+모든 RNN은 neural network 모듈을 반복시키는 체인과 같은 형태를 하고 있다. 기본적인 RNN에서 이렇게 반복되는 모듈은 굉장히 단순한 구조를 가지고 있다. 예를 들어 tanh layer 한 층을 들 수 있다.
+![png](pg1.png)
+
+LSTM도 똑같이 체인과 같은 구조를 가지고 있지만, 각 반복 모듈은 다른 구조를 갖고 있다. 단순한 neural network layer 한 층 대신에, 4개의 layer가 특별한 방식으로 서로 정보를 주고 받도록 되어 있다.
+![png](pg2.png)
+
+
+
+장단기 기억에는 다양한 변형이 있으며 제가 설명한 것은 매우 일반적입니다. 모든 LSTM이 위의 예와 같은 것은 아니며 수학 방정식과 LSTM 셀의 작동에서 약간의 차이점을 찾을 수 있습니다. 차이점은 큰 차이점이 아니며 명확하게 이해하면 쉽게 이해할 수 있습니다.
+
+다음은 위에 정의된 개념을 더 깊이 이해할 수 있도록 기본 LSTM 구조를 그래픽으로 나타낸 것입니다.
+
+![png](pg4.jpg)
+
+이제 LSTM의 핵심 개념을 간단히 요약해 보겠습니다.
+
+1. LSTM은 출력되는 것과 별도의 셀 상태를 유지할 수 있습니다.
+
+2. 정보의 흐름을 제어하기 위해 게이트를 사용합니다.
+
+3. Forget Gate는 불필요한 정보를 제거하는 데 사용됩니다.
+
+4. 현재 입력에서 관련 정보 저장
+
+5. 셀 상태를 선택적으로 업데이트
+
+출력 게이트는 
+중단 없는 그라데이션 흐름으로 시간 에 따른 셀 상태 역전파  의 필터링된 버전을 반환합니다.
+
+LSTM의 역전파는 RNN 섹션에서 설명한 방식과 유사하게 작동합니다.
+
 - 
 # IV. Evaluation & Analysis
 - Graphs, tables, any statistics (if any)
@@ -36,7 +71,7 @@ E-mail : jhshin1030@naver.com
 # VI. Conclusion: Discussion
 
 ```python
-LSTM을 이용한 삼성전자 주가 예측
+LSTM을 이용한 Bitcoin 예측
 ```
 
 
@@ -54,11 +89,6 @@ import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 ```
 
-
-```python
-# from google.colab import drive
-# drive.mount('/content/drive')
-```
 
 
 ```python
@@ -97,26 +127,6 @@ df.shape
 
 
     (366, 6)
-
-
-
-
-```python
-# start = (2000, 1, 1) # 2020년 01년 01월 
-# start = datetime.datetime(*start) 
-# end = datetime.date.today() # 현재 
-# # yahoo 에서 삼성 전자 불러오기 
-# #df = pdr.DataReader('005930.KS', 'yahoo', start, end) 
-# df.head(5) 
-# df.tail(5) 
-# df.Close.plot(grid=True)
-
-#plt.style.use(‘ggplot’)
-#df[‘Volume’].plot(label=‘CLOSE’, title=‘**** Stock Volume’)
-```
-
-
-
 
 ```python
 X = df.iloc[:, :-1]
