@@ -33,11 +33,11 @@ E-mail : jhshin1030@naver.com
 
 그 중에서 LSTM (Long Shor-Term Memory)를 이용할것이다. LSTM 은 RNN의 수정된 아키텍처이며, 긴 의존 기간을 필요로 하는 학습을 수행할 능력을 갖고 있다.
 모든 RNN은 neural network 모듈을 반복시키는 체인과 같은 형태를 하고 있다. 기본적인 RNN에서 이렇게 반복되는 모듈은 굉장히 단순한 구조를 가지고 있다. 예를 들어 tanh layer 한 층을 들 수 있다.
--RNN의 구조
+- RNN의 구조
 ![png](pg1.png)
 
 LSTM도 똑같이 체인과 같은 구조를 가지고 있지만, 각 반복 모듈은 다른 구조를 갖고 있다. 단순한 neural network layer 한 층 대신에, 4개의 layer가 특별한 방식으로 서로 정보를 주고 받도록 되어 있다.
--LSTM의 
+- LSTM의 
 ![png](pg2.png)
 ![png](pg3.png)
 
