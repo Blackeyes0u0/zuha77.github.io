@@ -79,7 +79,7 @@ LSTM 네트워크는 시계열 에서 중요한 이벤트 사이에 알 수 없�
 LSTM의 역전파는 RNN 섹션에서 설명한 방식과 유사하게 작동합니다.
 
 - 
-# IV. Code implement Evaluation & Analysis
+# IV. Code implement Analysis & conclusion
 
 - pytorch를 이용해 bitcoin 데이터를 학습하여 구현하였다.
 
