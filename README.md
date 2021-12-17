@@ -191,7 +191,7 @@ y_mm = mm.fit_transform(y)
  데이터 전처리 라고도 합니다.
 이렇게 하면 데이터세트가 변환되고 크기가 조정됩니다. 다음은 데이터 세트를 두 부분으로 나누는 것입니다. 1은 훈련용이고 다른 부분은 값을 테스트하기 위한 것입니다. 순차 데이터이고 순서가 중요하기 때문에 처음 300개 행은 학습용으로, 53개 행은 데이터 테스트용으로 사용합니다. LSTM을 사용하여 이렇게 적은 양의 데이터에 대해 정말 좋은 예측을 할 수 있음을 알 수 있습니다 .
 ```python
-#first 200 for training
+#처음 300개를 트레이닝 셋으로 설정
 
 X_train = X_ss[:300, :]
 X_test = X_ss[300:, :]
@@ -283,9 +283,9 @@ class LSTM1(nn.Module):
         output, (hn, cn) = self.lstm(x, (h_0, c_0)) #lstm with input, hidden, and internal state
         hn = hn.view(-1, self.hidden_size) #reshaping the data for Dense layer next
         out = self.relu(hn)
-        out = self.fc_1(out) #first Dense
+        out = self.fc_1(out) #첫 dense 층
         out = self.relu(out) #relu
-        out = self.fc(out) #Final Output
+        out = self.fc(out) #마지막 output
         return out
 ```
 여기에서 은닉 상태를 정의했고 내부 상태를 먼저 0으로 초기화했습니다. 우선, 현재 타임스탬프 t 의 입력과 함께 LSTM의 숨겨진 상태와 내부 상태를 전달할 것 입니다. 이것은 새로운 숨겨진 상태, 현재 상태 및 출력을 반환합니다. Dense Layer로 전달할 수 있도록 출력의 모양을 변경합니다. 다음으로 활성화를 적용하고 조밀한 계층에 전달하고 출력을 반환합니다.
@@ -365,13 +365,13 @@ train_predict = lstm1(df_X_ss)#forward pass
 data_predict = train_predict.data.numpy() #numpy conversion
 dataY_plot = df_y_mm.data.numpy()
 
-data_predict = mm.inverse_transform(data_predict) #reverse transformation
+data_predict = mm.inverse_transform(data_predict) #역변환
 dataY_plot = mm.inverse_transform(dataY_plot)
 plt.figure(figsize=(10,6)) #plotting
-plt.axvline(x=300, c='purple', linestyle='--') #size of the training set
+plt.axvline(x=300, c='purple', linestyle='--') #트레이닝 셋의 크기
 
 plt.plot(dataY_plot, label='Actuall Data') #actual plot
-plt.plot(data_predict, label='Predicted Data') #predicted plot
+plt.plot(data_predict, label='Predicted Data') #예측된 그래프
 plt.title('Time-Series Prediction')
 plt.legend()
 plt.show() 
@@ -395,11 +395,4 @@ plt.show()
 
 
 
-# VI. Conclusion: Discussion
-
-
-
-```python
-
-```
 
