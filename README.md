@@ -12,6 +12,10 @@ AI + X : 딥러닝 final project
 - 최근 암호화폐거래소로 투자자들이 몰리면서 비트코인 가격이 급등락하고 있다. 이러한 마구잡이처럼 보이는 비트코인 시장에서 과연 얼마나 예측이 가능한지. 그리고 예측한 모델이 얼마나 실제 데이터와 일치하는지를 확인해보고 딥러닝을 활용한 투자 가능성을 보고 싶었다. 그리하여이 블로그에서는 딥러닝 모형을 이용하여 비트코인의 가격을 예측하고, 투자전략을 통해 비트코인의 수익성이 있는지를 분석하는 것이 목표이다. 비선형성과 장기기억 특성을 보이는 비트코인 가격 예측모형으로는 LSTM을 활용하여 분석하였다. 
 
 
+데이터 출처 
+https://finance.yahoo.com/quote/BTC-USD/history?period1=1410912000&period2=1639699200&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true
+
+
 ![png](bb.jpg)
 
 # II. Datasets
@@ -71,11 +75,10 @@ LSTM 네트워크는 시계열 에서 중요한 이벤트 사이에 알 수 없�
 LSTM의 역전파는 RNN 섹션에서 설명한 방식과 유사하게 작동합니다.
 
 - 
-# IV. Evaluation & Analysis
-- Graphs, tables, any statistics (if any)
-# V. Related Work (e.g., existing studies)
-- Tools, libraries, blogs, or any documentation that you have used to do this project.
-# VI. Conclusion: Discussion
+# IV. Code implement Evaluation & Analysis
+
+- pytorch를 이용해 bitcoin 데이터를 학습하여 구현하였다.
+
 
 ```python
 LSTM을 이용한 Bitcoin 예측
@@ -100,12 +103,7 @@ from torch.utils.data import Dataset, DataLoader
 
 ```python
 #불러올 파일의 경로를 filename 변수에 저장
-#filename = 'C:/Users/문서/BTC-USD.csv'
 filename = 'C:/Users/문서/BTC.csv'
-#filename = 'C:/Users/jhshi/OneDrive/문서/Python Scripts/BTC.csv'
-#filename = 'C:/Users/jhshi/Downloads/BTC'
-#filename = 'C:/Users/문서/SBUX.csv'
-#filename = '/content/SBUX.csv'
 df = pd.read_csv(filename)
 ```
 
@@ -114,7 +112,7 @@ df = pd.read_csv(filename)
 #pandas read_csv로 불러오기
 df = pd.read_csv(filename,index_col ='Date' , parse_dates = True)
 df.columns
-#df = pd.read_csv(filename, index_col = ‘Date’, parse_dates=True)
+
 ```
 
 
@@ -132,8 +130,10 @@ df.shape
 
 
 
-
     (366, 6)
+    
+다음을 통헤 데이터의 헤드와 shape를 확인 할수 있습니다.
+또한 shape의 크기에 따라 train set 과 test set을 정할 수 있습니다.
 
 ```python
 X = df.iloc[:, :-1]
@@ -164,7 +164,7 @@ plt.plot(x_n,y_n)
 plt.show()
 # print(len(y_n))
 ```
-
+이제 기간과 함께 레이블 열을 플롯하여 재고 볼륨의 원래 추세를 확인할 수 있습니다.
 
     
 ![png](output_9_0.png)
@@ -184,8 +184,8 @@ ss = StandardScaler()
 X_ss = ss.fit_transform(X)
 y_mm = mm.fit_transform(y) 
 ```
-
-
+ 데이터 전처리 라고도 합니다.
+이렇게 하면 데이터세트가 변환되고 크기가 조정됩니다. 다음은 데이터 세트를 두 부분으로 나누는 것입니다. 1은 훈련용이고 다른 부분은 값을 테스트하기 위한 것입니다. 순차 데이터이고 순서가 중요하기 때문에 처음 300개 행은 학습용으로, 53개 행은 데이터 테스트용으로 사용합니다. LSTM을 사용하여 이렇게 적은 양의 데이터에 대해 정말 좋은 예측을 할 수 있음을 알 수 있습니다 .
 ```python
 #first 200 for training
 
@@ -251,7 +251,9 @@ print("Testing Shape", X_test_tensors_final.shape, y_test_tensors.shape)
     Training Shape torch.Size([300, 1, 5]) torch.Size([300, 1])
     Testing Shape torch.Size([66, 1, 5]) torch.Size([66, 1])
     
+이제 LSTM 모델을 빌드할 시간입니다. PyTorch는 훨씬 더 파이썬적이기 때문에 모든 모델은 nn.Module 슈퍼클래스 에서 상속되어야 합니다. 
 
+여기에서 모든 중요한 변수와 레이어를 정의했습니다. 다음으로 같은 하이퍼파라미터가 서로 겹쳐진 2개의 LSTM 레이어를 사용할 것입니다( hidden_size 를 통해 ). 2개의 완전 연결 레이어, ReLU 레이어 및 일부 도우미 변수를 정의했습니다. 다음으로 LSTM의 정방향 패스를 정의합니다.
 
 ```python
 class LSTM1(nn.Module):
@@ -282,8 +284,11 @@ class LSTM1(nn.Module):
         out = self.fc(out) #Final Output
         return out
 ```
+여기에서 은닉 상태를 정의했고 내부 상태를 먼저 0으로 초기화했습니다. 우선, 현재 타임스탬프 t 의 입력과 함께 LSTM의 숨겨진 상태와 내부 상태를 전달할 것 입니다. 이것은 새로운 숨겨진 상태, 현재 상태 및 출력을 반환합니다. Dense Layer로 전달할 수 있도록 출력의 모양을 변경합니다. 다음으로 활성화를 적용하고 조밀한 계층에 전달하고 출력을 반환합니다.
 
+이것으로 Forward Pass와 LSTM1 클래스가 완성 됩니다. 런타임에 모델을 훈련하는 동안 역전파 논리를 적용합니다.
 
+이제 사용할 몇 가지 중요한 변수를 정의해 보겠습니다. 이것은 Epoch 수, 숨겨진 크기 등과 같은 하이퍼파라미터입니다.
 ```python
 
 num_epochs = 1000 #1000 epochs
@@ -295,18 +300,18 @@ num_layers = 1 #number of stacked lstm layers
 
 num_classes = 1 #number of output classes 
 ```
-
+이제 클래스 LSTM1 개체를 인스턴스화 합니다
 
 ```python
 lstm1 = LSTM1(num_classes, input_size, hidden_size, num_layers, X_train_tensors_final.shape[1]) #our lstm class 
 ```
-
+Loss function과 optimizer를 정의해보자.
 
 ```python
 criterion = torch.nn.MSELoss()    # mean-squared error for regression
 optimizer = torch.optim.Adam(lstm1.parameters(), lr=learning_rate) 
 ```
-
+이제 에포크 수를 루프하고, 순방향 패스를 수행하고, 손실을 계산하고, 최적화 단계를 통해 가중치를 개선합니다. # 모델 훈련
 
 ```python
 for epoch in range(num_epochs):
@@ -322,6 +327,8 @@ for epoch in range(num_epochs):
   if epoch % 100 == 0:
     print("Epoch: %d, loss: %1.5f" % (epoch, loss.item())) 
 ```
+이것은 1000 epoch에 대한 훈련을 시작하고 매 100 epoch에서 손실을 print합니다.
+
 
     Epoch: 0, loss: 0.32506
     Epoch: 100, loss: 0.00618
@@ -334,7 +341,9 @@ for epoch in range(num_epochs):
     Epoch: 800, loss: 0.00494
     Epoch: 900, loss: 0.00487
     
+손실이 적고 잘 수행되고 있음을 알 수 있습니다. 데이터 세트에 대한 예측을 플롯하여 성능을 확인하겠습니다.
 
+그러나 전체 데이터 세트에 대한 예측을 수행하기 전에 원본 데이터 세트를 모델에 적합한 형식으로 가져와야 합니다. 이는 위와 유사한 코드를 사용하여 수행할 수 있습니다.
 
 ```python
 df_X_ss = ss.transform(df.iloc[:, :-1]) #old transformers
@@ -345,7 +354,7 @@ df_y_mm = Variable(torch.Tensor(df_y_mm))
 #reshaping the dataset
 df_X_ss = torch.reshape(df_X_ss, (df_X_ss.shape[0], 1, df_X_ss.shape[1])) 
 ```
-
+이제 순방향 패스를 통해 전체 데이터 세트에 대한 예측을 수행하기만 하면 됩니다. 그런 다음 이를 플롯하기 위해 예측을 numpy로 변환하고 역변환합니다(실제 답을 확인하기 위해 레이블을 변환했으며 역변환해야 함) 그런 다음 플로팅합니다.
 
 ```python
 train_predict = lstm1(df_X_ss)#forward pass
@@ -367,7 +376,21 @@ plt.show()
 
     
 ![png](output_23_0.png)
-    
+ 모델이 꽤 잘 수행되고 있음을 알 수 있습니다.
+ 
+ 
+ 
+# V. Related Work (e.g., existing studies)
+- anconda jupyter note book 과 google colab에서 작업하였고, pytorch docutments, kaggle, blog 등을 보며 학습하였다.
+- https://wikidocs.net/book/2788
+- https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html
+- https://www.kaggle.com/meetnagadia/bitcoin-price-prediction-using-lstm/notebook
+- https://coding-yoon.tistory.com/131
+- https://finance.yahoo.com/quote/BTC-USD/history?p=BTC-USD (데이터 출처)
+
+
+
+# VI. Conclusion: Discussion
 
 
 
