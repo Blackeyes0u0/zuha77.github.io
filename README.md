@@ -3,7 +3,6 @@
 
 #youtube
 https://youtu.be/olOWr6td928
-![png](youtube.png)
 
 
 
